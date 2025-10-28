@@ -13,6 +13,12 @@ struct ContentView: View {
 	@ObservedObject var profileViewModel: ProfileViewModel
 	@ObservedObject var notesViewModel: NotesViewModel
 	
+	private let levels: [ArchLevel] = [
+		.init(title: "MVC", subtitle: "Camadas Básicas"),
+		.init(title: "MVVM", subtitle: "Estado Reativo")
+	]
+	@State var selectionID: ArchLevel.ID?
+	
 	var body: some View {
 		NavigationStack {
 			
@@ -35,6 +41,23 @@ struct ContentView: View {
 			}
 			.font(.title2)
 			.padding(.horizontal)
+			Spacer()
+			
+			Carousel(items: levels, selection: $selectionID, spacing: 30) { item in
+				NavigationLink {
+					switch item.title {
+					case "MVVM":
+						MVVMView()
+					default:
+						Text("Ish")
+					}
+				} label: {
+					ArchitectureLevelCard(title: item.title, subtitle: item.subtitle)
+						.clipShape(RoundedRectangle(cornerRadius: 16))
+						.shadow(radius: 6)
+				}
+			}
+			
 			Spacer()
 		}
 		.ignoresSafeArea()
@@ -74,3 +97,4 @@ extension ContentView {
 	}
 	
 }
+

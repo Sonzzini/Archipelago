@@ -9,43 +9,54 @@ import SwiftUI
 
 struct NodePopup: View {
 	
-	let node: NodeDescriptor
-	let send: (GraphIntent) -> Void
+	let node: IslandNode
+	let onEmit: () -> Void
 	
 	@Environment(\.dismiss) var dismiss
 	
 	var body: some View {
 		NavigationStack {
-			VStack(alignment: .leading, spacing: 16) {
-				Text(node.title)
-					.font(.title2).bold()
-				Text(node.details)
-					.foregroundStyle(.secondary)
-				
-				Divider()
-				
-				// Exemplo de ações
-				Button {
-					send(.emitAction(from: node.role))
-				} label: {
-					Label("Emitir ação a partir de \(node.role.rawValue)", systemImage: "paperplane.fill")
+			ScrollView {
+				VStack(alignment: .leading, spacing: 16) {
+					Text(node.type.rawValue)
+						.font(.title2).bold()
+					Text(node.type.description)
+						.foregroundStyle(.secondary)
+					
+					Divider()
+					
+					// Exemplo de ações
+					Button {
+						onEmit()
+						dismiss()
+					} label: {
+						switch node.type {
+						case .view:
+							viewLabel
+						case .model:
+							modelLabel
+						case .viewModel:
+							viewModelLabel
+						default:
+							Label("uhhh", systemImage: "paperplane.fill")
+						}
+					}
+					.buttonStyle(.borderedProminent)
+					
+//					Button {
+//						
+//					} label: {
+//						Label("Destacar nó", systemImage: "sparkles")
+//					}
+					
+					Spacer()
 				}
-				.buttonStyle(.borderedProminent)
-				
-				Button {
-					send(.highlight(role: node.role))
-				} label: {
-					Label("Destacar nó", systemImage: "sparkles")
-				}
-				
-				Spacer()
 			}
 			.padding()
 			.navigationTitle("Detalhes do Nó")
 			.toolbar {
 				ToolbarItem(placement: .topBarTrailing) {
 					Button("Fechar") {
-						send(.clear) // opcional
 						dismiss()
 					}
 				}
@@ -55,3 +66,17 @@ struct NodePopup: View {
 	}
 }
 
+extension NodePopup {
+	
+	private var viewLabel: some View {
+		Label("Salvar novo modelo a partir da View", systemImage: "paperplane.fill")
+	}
+	
+	private var modelLabel: some View {
+		Label("Salvar novo modelo a partir do Model", systemImage: "paperplane.fill")
+	}
+	
+	private var viewModelLabel: some View {
+		Label("Salvar novo modelo a partir do ViewModel", systemImage: "paperplane.fill")
+	}
+}
