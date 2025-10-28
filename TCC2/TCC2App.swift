@@ -9,9 +9,22 @@ import SwiftUI
 
 @main
 struct TCC2App: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+	
+	@StateObject var profileViewModel = ProfileViewModel()
+	@StateObject var notesViewModel = NotesViewModel()
+	
+	@State var shouldPresentOnboarding: Bool = false
+	
+	var body: some Scene {
+		WindowGroup {
+			ContentView(profileViewModel: profileViewModel,
+							notesViewModel: notesViewModel)
+				.onAppear {
+					shouldPresentOnboarding = DataController.shared.profileIsSetup()
+				}
+				.fullScreenCover(isPresented: $shouldPresentOnboarding) {
+					OnboardingView(profileViewModel: profileViewModel)
+				}
+		}
+	}
 }

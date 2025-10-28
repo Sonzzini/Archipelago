@@ -7,4 +7,4 @@
 
 import Foundation
 
-typealias ProfileRepository = DataRepository<ProfileEntity>
+//typealias ProfileRepository = DataRepository<ProfileEntity>

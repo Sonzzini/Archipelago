@@ -10,6 +10,9 @@ import SwiftUI
 struct OnboardingView: View {
 	
 	@Environment(\.colorScheme) var colorScheme
+	
+	@ObservedObject var profileViewModel: ProfileViewModel
+	
 	@State var currentViewIndex: Int = 0
 	
 	var body: some View {
@@ -17,34 +20,37 @@ struct OnboardingView: View {
 			TabView(selection: $currentViewIndex) {
 				IntroView()					.tag(0)
 				FeatureHighlightView()	.tag(1)
+				CreateProfileView(profileViewModel: profileViewModel)		.tag(2)
 			}
-			.disabled(true)
 			.tabViewStyle(.page(indexDisplayMode: .always))
-			.frame(maxWidth: UIScreen.main.bounds.width * 3, maxHeight: .infinity)
+			.highPriorityGesture (
+				DragGesture()
+			)
 			.background(
 				Rectangle()
 					.fill(
 						Gradient(colors: colorScheme == .dark ? [.accent, .background] : [.background, .accent])
 					)
-					.frame(maxWidth: UIScreen.main.bounds.width * 3, maxHeight: .infinity)
 			)
 			
 			VStack {
 				Spacer()
 				
 				// TODO: Botão de avançar ficar no mesmo lugar
-				Button {
-					withAnimation(.easeInOut(duration: 0.5)) {
-						if currentViewIndex < 2 {
-							currentViewIndex += 1
+				if currentViewIndex < 2 {
+					Button {
+						withAnimation(.easeInOut(duration: 0.5)) {
+							if currentViewIndex < 2 {
+								currentViewIndex += 1
+							}
 						}
+					} label: {
+						Text("Avançar")
+							.font(.title2)
+							.padding(10)
 					}
-				} label: {
-					Text("Avançar")
-						.font(.title2)
-						.padding(10)
+					.buttonStyle(.glassProminent)
 				}
-				.buttonStyle(.glassProminent)
 				
 				if currentViewIndex > 0 {
 					Button {
@@ -67,5 +73,5 @@ struct OnboardingView: View {
 }
 
 #Preview {
-	OnboardingView()
+	OnboardingView(profileViewModel: ProfileViewModel())
 }
