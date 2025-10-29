@@ -91,6 +91,7 @@ struct Model {
 }
 
 """)
+				.presentationDragIndicator(.visible)
 			}
 			.toolbar {
 				ToolbarItem(placement: .topBarTrailing) {

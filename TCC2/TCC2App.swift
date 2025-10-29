@@ -12,13 +12,15 @@ struct TCC2App: App {
 	
 	@StateObject var profileViewModel = ProfileViewModel()
 	@StateObject var notesViewModel = NotesViewModel()
+	@StateObject var quizViewModel = QuizViewModel()
 	
 	@State var shouldPresentOnboarding: Bool = false
 	
 	var body: some Scene {
 		WindowGroup {
 			ContentView(profileViewModel: profileViewModel,
-							notesViewModel: notesViewModel)
+							notesViewModel: notesViewModel,
+							quizViewModel: quizViewModel)
 				.onAppear {
 					shouldPresentOnboarding = DataController.shared.profileIsSetup()
 				}

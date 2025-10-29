@@ -25,38 +25,50 @@ struct NotesView: View {
 	@State var filteredNotes: [NoteEntity] = []
 	
 	var body: some View {
-		Group {
-			if !notesViewModel.notes.isEmpty {
-				HStack {
-					Spacer()
-					Picker(selection: $noteFilter) {
-						ForEach(noteTags, id: \.self) { tag in
-							Text(tag).tag(tag)
+		NavigationStack {
+			Group {
+				if !notesViewModel.notes.isEmpty {
+					HStack {
+						Spacer()
+						Picker(selection: $noteFilter) {
+							ForEach(noteTags, id: \.self) { tag in
+								Text(tag).tag(tag)
+							}
+						} label: {
+							Label("Filtrar por", systemImage: "line.3.horizontal.decrease")
 						}
+						.pickerStyle(.menu)
+						.onChange(of: noteFilter) { oldValue, newValue in
+							if newValue == "Todas" {
+								filteredNotes = notesViewModel.notes
+							} else {
+								filteredNotes = notesViewModel.notes.filter { $0.tag == newValue }
+							}
+						}
+					}
+					ScrollView {
+						LazyVGrid(columns: columns) {
+							ForEach(filteredNotes) { note in
+								NoteCard(note: note)
+									.foregroundStyle(.black)
+							}
+						}
+					}
+					.padding(.horizontal)
+				} else {
+					Text("Nenhuma nota ainda")
+						.foregroundStyle(.secondary)
+				}
+			}
+			.navigationTitle("Suas Notas")
+			.toolbar {
+				ToolbarItem(placement: .topBarTrailing) {
+					Button {
+						newNoteViewIsPresented.toggle()
 					} label: {
-						Label("Filtrar por", systemImage: "line.3.horizontal.decrease")
-					}
-					.pickerStyle(.menu)
-					.onChange(of: noteFilter) { oldValue, newValue in
-						if newValue == "Todas" {
-							filteredNotes = notesViewModel.notes
-						} else {
-							filteredNotes = notesViewModel.notes.filter { $0.tag == newValue }
-						}
+						Image(systemName: "plus")
 					}
 				}
-				ScrollView {
-					LazyVGrid(columns: columns) {
-						ForEach(filteredNotes) { note in
-							NoteCard(note: note)
-								.foregroundStyle(.black)
-						}
-					}
-				}
-				.padding(.horizontal)
-			} else {
-				Text("Nenhuma nota ainda")
-					.foregroundStyle(.secondary)
 			}
 		}
 		.overlay {
@@ -66,16 +78,6 @@ struct NotesView: View {
 						// iOS 16-: Feedback tátil via UIKit
 						UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 					}
-			}
-		}
-		.navigationTitle("Suas Notas")
-		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				Button {
-					newNoteViewIsPresented.toggle()
-				} label: {
-					Image(systemName: "plus")
-				}
 			}
 		}
 		.fullScreenCover(isPresented: $newNoteViewIsPresented) {

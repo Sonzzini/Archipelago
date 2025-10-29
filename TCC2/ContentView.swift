@@ -12,6 +12,7 @@ struct ContentView: View {
 	
 	@ObservedObject var profileViewModel: ProfileViewModel
 	@ObservedObject var notesViewModel: NotesViewModel
+	@ObservedObject var quizViewModel: QuizViewModel
 	
 	private let levels: [ArchLevel] = [
 		.init(title: "MVC", subtitle: "Camadas Básicas"),
@@ -43,18 +44,47 @@ struct ContentView: View {
 			.padding(.horizontal)
 			Spacer()
 			
-			Carousel(items: levels, selection: $selectionID, spacing: 30) { item in
-				NavigationLink {
-					switch item.title {
-					case "MVVM":
-						MVVMView()
-					default:
-						Text("Ish")
+			VStack(alignment: .leading) {
+				Divider()
+				Text("Visualizações")
+					.font(.title3)
+					.bold()
+					.foregroundStyle(.accent)
+					.padding(.horizontal)
+				
+				Carousel(items: levels, selection: $selectionID, spacing: 30) { item in
+					NavigationLink {
+						switch item.title {
+						case "MVVM":
+							MVVMView()
+						default:
+							Text("Ish")
+						}
+					} label: {
+						ArchitectureLevelCard(title: item.title, subtitle: item.subtitle)
+							.clipShape(RoundedRectangle(cornerRadius: 16))
+							.shadow(radius: 6)
 					}
-				} label: {
-					ArchitectureLevelCard(title: item.title, subtitle: item.subtitle)
-						.clipShape(RoundedRectangle(cornerRadius: 16))
-						.shadow(radius: 6)
+				}
+			}
+			
+			
+			VStack(alignment: .leading) {
+				Divider()
+				Text("Desafios")
+					.font(.title3)
+					.bold()
+					.foregroundStyle(.accent)
+					.padding(.horizontal)
+				
+				Carousel(items: quizViewModel.quizzes, selection: $quizViewModel.quizSelectionID) { quiz in
+					NavigationLink {
+						QuizView(quizViewModel: quizViewModel, quiz: quiz)
+					} label: {
+						ArchitectureLevelCard(title: quiz.title ?? "Quiz Title", subtitle: "")
+							.clipShape(RoundedRectangle(cornerRadius: 16))
+							.shadow(radius: 6)
+					}
 				}
 			}
 			
@@ -66,7 +96,8 @@ struct ContentView: View {
 
 #Preview {
 	ContentView(profileViewModel: ProfileViewModel(),
-					notesViewModel: NotesViewModel())
+					notesViewModel: NotesViewModel(),
+					quizViewModel: QuizViewModel())
 }
 
 extension ContentView {
@@ -97,4 +128,3 @@ extension ContentView {
 	}
 	
 }
-

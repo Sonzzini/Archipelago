@@ -31,10 +31,13 @@ struct NoteCard: View {
 					.foregroundStyle(.secondary)
 			}
 			.frame(minWidth: 150, idealWidth: 180, maxWidth: 300, minHeight: 150, idealHeight: 180, maxHeight: 300)
+			
+//			.glassEffect()
 			.background(
 				note.colorString?.stringHexToColor()
+					.clipShape(RoundedRectangle(cornerRadius: 16))
 			)
-			.glassEffect()
+			.shadow(radius: 6)
 		}
 
 		
@@ -46,5 +49,4 @@ struct NoteCard: View {
 	let note = NoteEntity(context: DataController.shared.viewContext)
 	
 	NoteCard(note: note)
-	
 }
