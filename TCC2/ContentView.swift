@@ -15,8 +15,8 @@ struct ContentView: View {
 	@ObservedObject var quizViewModel: QuizViewModel
 	
 	private let levels: [ArchLevel] = [
-		.init(title: "MVC", subtitle: "Camadas Básicas"),
-		.init(title: "MVVM", subtitle: "Estado Reativo")
+		.init(title: "MVVM", subtitle: "Estado Reativo"),
+		.init(title: "VIPER", subtitle: "Responsabilidades Claras")
 	]
 	@State var selectionID: ArchLevel.ID?
 	
@@ -57,6 +57,8 @@ struct ContentView: View {
 						switch item.title {
 						case "MVVM":
 							MVVMView()
+						case "VIPER":
+							VIPERView()
 						default:
 							Text("Ish")
 						}

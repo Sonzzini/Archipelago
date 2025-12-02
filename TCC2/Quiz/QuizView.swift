@@ -14,8 +14,6 @@ struct QuizView: View {
 	
 	let quiz: Quiz
 	
-	@State var attempts: [QuizAttempt] = []
-	
 	var body: some View {
 		VStack {
 			Text(quiz.title ?? "Quiz Title")
@@ -23,8 +21,10 @@ struct QuizView: View {
 				.bold()
 				.foregroundStyle(.accent)
 			
-			Button {
-				
+			NavigationLink {
+				// Começar o desafio
+				ONQuizView(quizViewModel: quizViewModel, quiz: quiz)
+					
 			} label: {
 				Text("Começar Desafio!")
 					.padding(.vertical, 20)
@@ -34,7 +34,7 @@ struct QuizView: View {
 							.fill(.ultraThinMaterial)
 							.overlay(
 								RoundedRectangle(cornerRadius: 16)
-									.fill(.accent.opacity(0.2))  // só uma “tinta leve”
+									.fill(.accent.opacity(0.2))
 							)
 					)
 					.shadow(radius: 6)
@@ -44,24 +44,20 @@ struct QuizView: View {
 			Divider()
 			
 			ScrollView {
-				if attempts.isEmpty {
+				if quizViewModel.attemptsForQuiz(quiz: quiz).isEmpty {
 					Text("Nenhuma tentativa ainda!")
 						.font(.subheadline)
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.vertical, 30)
 				} else {
-					ForEach(attempts) { attempt in
+					ForEach(quizViewModel.attemptsForQuiz(quiz: quiz)) { attempt in
 						QuizAttemptCard(attempt: attempt)
+							.padding(.horizontal)
 					}
+					.padding(.top)
 				}
 			}
-			.onAppear {
-				quiz.attempts?.forEach { attempt in
-					attempts.append(attempt as! QuizAttempt)
-				}
-			}
-			
 		}
 	}
 }
@@ -78,7 +74,7 @@ struct QuizView: View {
 					.fill(.ultraThinMaterial)
 					.overlay(
 						RoundedRectangle(cornerRadius: 16)
-							.fill(.accent.opacity(0.2))  // só uma “tinta leve”
+							.fill(.accent.opacity(0.2))
 					)
 			)
 			.shadow(radius: 6)

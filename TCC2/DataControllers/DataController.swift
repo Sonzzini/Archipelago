@@ -162,11 +162,97 @@ final class DataController {
 			return .failure(error)
 		}
 	}
+	
+	func registerQuizzAttempt(with results: [Question: (AnswerOption, TimeInterval)], score: Double, confiancas: [Int], for quiz: Quiz) -> Result<QuizAttempt, Error> {
+		let attempt = QuizAttempt(context: viewContext)
+		attempt.score = score
+		attempt.date = Date()
+		attempt.quiz = quiz
+		attempt.id = UUID()
+		
+		for (index, (question, tuple)) in results.enumerated() {
+			let (answer, timeInterval) = tuple
+			
+			let newResponse = Response(context: viewContext)
+			newResponse.id = UUID()
+			newResponse.question = question
+			newResponse.isCorrect = answer.isCorrect
+			newResponse.timeToAnswer = timeInterval
+			newResponse.confidence = Int16(confiancas[index]);
+			
+			attempt.addToResponses(newResponse)
+			newResponse.attempt = attempt
+			newResponse.answerChosen = answer
+			
+			_ = verifyNoNilFields(for: newResponse)
+		}
+		
+		_ = verifyNoNilFields(for: attempt)
+		
+		do {
+			try viewContext.save()
+			
+			return .success(attempt)
+		} catch {
+			print("DATACONTROLLER.registerQuizzAttempt: Failed to save responses: \(error)")
+			return .failure(error)
+		}
+	}
+	
+	
+	func verifyNoNilFields(for obj: NSManagedObject) -> Bool {
+		
+		let attributes = obj.entity.attributesByName
+		var hasNoNilField: Bool = true
+		
+		for (name, _) in attributes {
+			
+			let value = obj.value(forKey: name)
+			print("\(name.uppercased()): \(value ?? "?")")
+			
+			if value == nil {
+				print("Field \(name) is nil.")
+				hasNoNilField = false
+			} else if let text = value as? String, text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+				print("Field \(name) is empty.")
+				hasNoNilField = false
+			} else if let array = value as? [Any], array.isEmpty {
+				print("Field \(name) is an empty list.")
+				hasNoNilField = false
+			} else if let data = value as? Data, data.isEmpty {
+				print("Field \(name) has empty Data.")
+				hasNoNilField = false
+			}
+		}
+		return hasNoNilField
+	}
+	
+	
+	func award(levels: Int, experience: Int) {
+		let profileResult = fetchProfile()
+		
+		switch profileResult {
+		case .success(let profile):
+			
+			profile.experience += Int16(experience)
+			profile.level += Int16(levels)
+			
+			while profile.experience > 100 {
+				profile.level += 1
+				profile.experience -= 100
+			}
+			
+			try? viewContext.save()
+			
+		case .failure(let error):
+			print("Could not find profile! \(error)")
+		}
+	}
 }
 
 //protocol DataControllerProtocol {
 //	associatedtype Entity: NSManagedObject
-//	
+//
 //	func save(_ configure: (Entity) -> Void) throws -> Entity
 //	func delete(_ obj: Entity) throws
 //	func fetchAll(predicate: NSPredicate?, sort: [NSSortDescriptor]) throws -> [Entity]

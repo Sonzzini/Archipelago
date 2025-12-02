@@ -30,16 +30,17 @@ struct NodePopup: View {
 						onEmit()
 						dismiss()
 					} label: {
-						switch node.type {
-						case .view:
-							viewLabel
-						case .model:
-							modelLabel
-						case .viewModel:
-							viewModelLabel
-						default:
-							Label("uhhh", systemImage: "paperplane.fill")
-						}
+//						switch node.type {
+//						case .view:
+//							viewLabel
+//						case .model:
+//							modelLabel
+//						case .viewModel:
+//							viewModelLabel
+//						default:
+//							Label("uhhh", systemImage: "paperplane.fill")
+//						}
+						Label("Salvar novo modelo a partir da \(node.type.rawValue)", systemImage: "paperplane.fill")
 					}
 					.buttonStyle(.borderedProminent)
 					

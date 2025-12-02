@@ -9,11 +9,13 @@
     <entity name="Architecture" representedClassName="Architecture" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="concepts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Concept" inverseName="architecture" inverseEntity="Concept"/>
+        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Response" inverseName="architecture" inverseEntity="Response"/>
     </entity>
     <entity name="Concept" representedClassName="Concept" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="architecture" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Architecture" inverseName="concepts" inverseEntity="Architecture"/>
         <relationship name="questions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Question" inverseName="concept" inverseEntity="Question"/>
+        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Response" inverseName="concept" inverseEntity="Response"/>
     </entity>
     <entity name="NoteEntity" representedClassName="NoteEntity" syncable="YES" codeGenerationType="class">
         <attribute name="body" optional="YES" attributeType="String"/>
@@ -53,7 +55,9 @@
         <attribute name="isCorrect" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="timeToAnswer" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="answerChosen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnswerOption" inverseName="responses" inverseEntity="AnswerOption"/>
+        <relationship name="architecture" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Architecture" inverseName="responses" inverseEntity="Architecture"/>
         <relationship name="attempt" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QuizAttempt" inverseName="responses" inverseEntity="QuizAttempt"/>
+        <relationship name="concept" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Concept" inverseName="responses" inverseEntity="Concept"/>
         <relationship name="question" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Question" inverseName="responses" inverseEntity="Question"/>
     </entity>
 </model>
